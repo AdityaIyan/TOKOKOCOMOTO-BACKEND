@@ -30,11 +30,11 @@ export declare class OrdersService {
             orderId: string;
         })[];
         buyer: {
-            id: string;
             username: string;
             email: string;
             password: string;
             role: string;
+            id: string;
             refreshToken: string | null;
             avatar: string | null;
             createdAt: Date;
@@ -169,11 +169,11 @@ export declare class OrdersService {
     }>;
     updateStatus(id: string, status: string): Promise<{
         buyer: {
-            id: string;
             username: string;
             email: string;
             password: string;
             role: string;
+            id: string;
             refreshToken: string | null;
             avatar: string | null;
             createdAt: Date;
