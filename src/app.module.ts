@@ -11,13 +11,18 @@ import { MailModule } from './mail/mail.module';
 import { UploadController } from './upload/upload.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import * as fs from 'fs';
+
+const publicPath = join(process.cwd(), 'public');
+const isPublicDirExists = fs.existsSync(publicPath);
+
+const staticModules = isPublicDirExists
+  ? [ServeStaticModule.forRoot({ rootPath: publicPath, serveRoot: '/public' })]
+  : [];
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'public'),
-      serveRoot: '/public',
-    }),
+    ...staticModules,
     PrismaModule,
     AuthModule,
     ProductsModule,
@@ -30,3 +35,4 @@ import { join } from 'path';
   providers: [AppService],
 })
 export class AppModule {}
+
