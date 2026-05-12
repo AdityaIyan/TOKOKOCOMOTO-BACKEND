@@ -1,5 +1,6 @@
 import { Controller, Post, Put, Body, UseGuards, Req, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { put } from '@vercel/blob';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -31,10 +32,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Put('profile')
   @UseInterceptors(FileInterceptor('avatar'))
-  updateProfile(@Req() req: any, @Body() body: any, @UploadedFile() file: Express.Multer.File) {
+  async updateProfile(@Req() req: any, @Body() body: any, @UploadedFile() file: Express.Multer.File) {
     const data = { ...body };
     if (file) {
-      data.avatar = file.filename;
+      const blob = await put(`avatars/${Date.now()}-${file.originalname}`, file.buffer, {
+        access: 'public',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      });
+      data.avatar = blob.url;
     }
     return this.authService.updateProfile(req.user.id, data);
   }
